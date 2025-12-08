@@ -20,55 +20,55 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [hasNotification, setHasNotification] = useState(false);
 
-  const fetchNotifications = useCallback(async (email: string) => {
-    const CACHE_KEY = `notifications_${email}`;
-    const FIVE_MIN = 5 * 60 * 1000;
+  // const fetchNotifications = useCallback(async (email: string) => {
+  //   const CACHE_KEY = `notifications_${email}`;
+  //   const FIVE_MIN = 5 * 60 * 1000;
 
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed.expiresAt > Date.now()) {
-          setHasNotification((parsed.data.notifications || []).length > 0);
-          return;
-        }
-      }
+  //   try {
+  //     const cached = localStorage.getItem(CACHE_KEY);
+  //     if (cached) {
+  //       const parsed = JSON.parse(cached);
+  //       if (parsed.expiresAt > Date.now()) {
+  //         setHasNotification((parsed.data.notifications || []).length > 0);
+  //         return;
+  //       }
+  //     }
 
-      const token = await getFirebaseToken();
-      const res = await fetch(
-        `/api/notifications?email=${encodeURIComponent(email)}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }
-      );
-      const data = await res.json();
+  //     const token = await getFirebaseToken();
+  //     const res = await fetch(
+  //       `/api/notifications?email=${encodeURIComponent(email)}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         }
+  //       }
+  //     );
+  //     const data = await res.json();
 
-      setHasNotification((data.notifications || []).length > 0);
+  //     setHasNotification((data.notifications || []).length > 0);
 
-      localStorage.setItem(
-        CACHE_KEY,
-        JSON.stringify({
-          data,
-          expiresAt: Date.now() + FIVE_MIN,
-        })
-      );
-    } catch (err) {
-      console.error("Failed to fetch notifications", err);
-    }
-  }, []);
+  //     localStorage.setItem(
+  //       CACHE_KEY,
+  //       JSON.stringify({
+  //         data,
+  //         expiresAt: Date.now() + FIVE_MIN,
+  //       })
+  //     );
+  //   } catch (err) {
+  //     console.error("Failed to fetch notifications", err);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u?.email) {
         fetchUserName(u.email);
-        fetchNotifications(u.email);
+        // fetchNotifications(u.email);
       }
     });
 
     return () => unsubscribe();
-  }, [fetchNotifications]);
+  }, []);
 
   const fetchUserName = async (email: string) => {
     try {
@@ -89,16 +89,17 @@ export default function Header() {
 
       const token = await getFirebaseToken();
       const response = await fetch(
-        `/api/user?email=${encodeURIComponent(email)}`, {
+        `/api/admin?email=${encodeURIComponent(email)}`,
+        {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      const data = await response.json();
-
+      const res = await response.json();
+      const data = res.data;
       if (!response.ok) throw new Error(data.error || "Failed to fetch user");
-
+      console.log(data);
       if (data?.name) {
         setDisplayName(data.name);
         localStorage.setItem("userData", JSON.stringify({ name: data.name }));
@@ -128,10 +129,10 @@ export default function Header() {
     return () => window.removeEventListener("resize", resize);
   }, []);
 
-  const handleSearch = () => {
-    if (!searchQuery.trim()) return;
-    router.push(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
-  };
+  // const handleSearch = () => {
+  //   if (!searchQuery.trim()) return;
+  //   router.push(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+  // };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -153,18 +154,18 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handler);
   }, [isOpen]);
 
-  const renderSearch = () => (
-    <>
-      <Search color="gray" size={20} />
-      <input
-        className="mx-3 h-full w-full focus:outline-none bg-transparent"
-        placeholder="Search stories, authors, or topics..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-      />
-    </>
-  );
+  // const renderSearch = () => (
+  //   <>
+  //     <Search color="gray" size={20} />
+  //     <input
+  //       className="mx-3 h-full w-full focus:outline-none bg-transparent"
+  //       placeholder="Search stories, authors, or topics..."
+  //       value={searchQuery}
+  //       onChange={(e) => setSearchQuery(e.target.value)}
+  //       onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+  //     />
+  //   </>
+  // );
 
   return (
     <>
@@ -185,18 +186,18 @@ export default function Header() {
         </GradientText>
 
         <div className="flex items-center gap-3 md:gap-4">
-          {isMobile ? (
-            <button
-              className="cursor-pointer hover:bg-gray-100 p-1 rounded-md transition active:scale-95"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-            >
-              <Search size={22} />
-            </button>
-          ) : (
-            <div className="flex items-center bg-gray-100 border border-gray-300 px-3 rounded-xl h-[40px] w-[500px]">
-              {renderSearch()}
-            </div>
-          )}
+          {/* {isMobile ? (
+          //   <button
+          //     className="cursor-pointer hover:bg-gray-100 p-1 rounded-md transition active:scale-95"
+          //     onClick={() => setIsSearchOpen(!isSearchOpen)}
+          //   >
+          //     <Search size={22} />
+          //   </button>
+          // ) : (
+          //   <div className="flex items-center bg-gray-100 border border-gray-300 px-3 rounded-xl h-[40px] w-[500px]">
+          //     {renderSearch()}
+          //   </div>
+          // )} */}
 
           <div className="relative flex items-center gap-1">
             {user && (
@@ -228,7 +229,9 @@ export default function Header() {
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
                     <button
-                      onClick={() => {router.push("/account")}}
+                      onClick={() => {
+                        router.push("/account");
+                      }}
                       className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 cursor-pointer"
                     >
                       <UserIcon size={16} /> Account
@@ -263,11 +266,11 @@ export default function Header() {
         </div>
       </div>
 
-      {isMobile && isSearchOpen && (
+      {/* {isMobile && isSearchOpen && (
         <div className="flex items-center bg-gray-100 border md:hidden my-2 border-gray-300 px-3 rounded-md h-[35px] mx-5">
           {renderSearch()}
         </div>
-      )}
+      )} */}
 
       <div className="border-1 border-gray-200 mt-2"></div>
     </>

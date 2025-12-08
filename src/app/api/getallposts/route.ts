@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { User, Post } from "../../../../db/schema";
+import { Post } from "../../../../db/schema";
 import { register } from "@/instrumentation";
 import redis from "@/lib/redis";
 
@@ -23,11 +23,6 @@ export async function GET(req: Request) {
   .sort({ createdAt: -1 })
   .skip(skip)
   .limit(limit)
-  .populate({
-    path: "author",
-    select:
-      "-posts -bio -bookmarks -instagram -snapchat -followers -following -likes -notifications -createdAt -updatedAt -__v",
-  })
   .select({
     title: 1,
     content: 1,

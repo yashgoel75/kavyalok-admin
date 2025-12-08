@@ -5,7 +5,7 @@ import "./globals.css";
 import PageTransitionWrapper from "@/components/PageTransitionWrapper";
 
 export const metadata: Metadata = {
-  title: "Kavyalok",
+  title: "Kavyalok Admin",
   description: "",
 };
 

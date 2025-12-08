@@ -44,25 +44,12 @@ export default function Navigation() {
 
   const navItems = [
     { icon: Home, url: "/dashboard", title: "Home" },
-    { icon: Bookmark, url: "/bookmark", title: "Bookmarks" },
-    { icon: PlusSquare, url: "/account/createPost", title: "New Post" },
-
-    { icon: Compass, url: "/explore", title: "Explore" },
+    // { icon: Bookmark, url: "/bookmark", title: "Bookmarks" },
+    { icon: PlusSquare, url: "/dashboard/events/create", title: "New Event" },
+    // { icon: Compass, url: "/explore", title: "Explore" },
     // { icon: GraduationCap, url: "/competitions", title: "Competitions" },
-    {
-      icon:
-        firebaseUser?.email == "kavyalokin@gmail.com"
-          ? GraduationCap
-          : Settings,
-      url:
-        firebaseUser?.email == "kavyalokin@gmail.com"
-          ? "/competitions"
-          : "/settings",
-      title:
-        firebaseUser?.email == "kavyalokin@gmail.com"
-          ? "Competitions"
-          : "Settings",
-    },
+    { icon: Settings, url: "/settings", title: "Settings" },
+    { icon: User, url: "/account", title: "Account" },
   ];
 
   const isActive = (url: string) => pathname.startsWith(url);
